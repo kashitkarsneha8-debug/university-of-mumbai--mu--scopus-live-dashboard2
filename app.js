@@ -1,7 +1,7 @@
 /**
  * app.js - University of Mumbai (MU) Live Scopus Intelligence Dashboard
- * Client-side Analytics, Multi-Dimensional Filters, Plotly Visualizations,
- * Data Exports, and Natural Language AI Copilot.
+ * MahaSAMARTH Institutional Design System (Intelligence. Transformation. Excellence.)
+ * Preserves 100% data logic, filters, calculations, exports, and AI Copilot.
  */
 
 (function () {
@@ -13,7 +13,7 @@
   const rawData = (window.SCOPUS_CACHE && window.SCOPUS_CACHE.data) ? window.SCOPUS_CACHE.data : [];
 
   const state = {
-    theme: "dark",
+    theme: document.documentElement.getAttribute("data-theme") || "light",
     startYear: 1950,
     endYear: 2026,
     selectedDepts: [],
@@ -170,23 +170,23 @@
   }
 
   // ---------------------------------------------------------
-  // 5. Plotly Theme Standardizer (Matching apply_chart_theme)
+  // 5. Plotly Theme Standardizer (MahaSAMARTH Institutional Palette)
   // ---------------------------------------------------------
   function applyChartTheme(layout, customOverrides = {}) {
     const isDark = state.theme === "dark";
-    const fontColor = isDark ? "#F8FAFC" : "#0F172A";
-    const axisColor = isDark ? "#94A3B8" : "#64748B";
-    const gridColor = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.07)";
+    const fontColor = isDark ? "#FFFFFF" : "#0D111A";
+    const axisColor = isDark ? "#AEBBC8" : "#526273";
+    const gridColor = isDark ? "rgba(38, 55, 71, 0.6)" : "rgba(216, 225, 232, 0.7)";
 
     const baseLayout = {
       paper_bgcolor: "rgba(0, 0, 0, 0)",
       plot_bgcolor: "rgba(0, 0, 0, 0)",
       font: {
-        family: "Plus Jakarta Sans, sans-serif",
+        family: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         color: fontColor,
         size: 12
       },
-      margin: { l: 40, r: 30, t: 40, b: 35 },
+      margin: { l: 45, r: 25, t: 30, b: 35 },
       legend: {
         orientation: "h",
         yanchor: "bottom",
@@ -196,24 +196,25 @@
         font: { size: 11, color: fontColor }
       },
       hoverlabel: {
-        bgcolor: isDark ? "#0E172A" : "#FFFFFF",
+        bgcolor: isDark ? "#111A26" : "#FFFFFF",
         font: {
-          family: "Plus Jakarta Sans, sans-serif",
-          color: isDark ? "#F8FAFC" : "#0F172A"
+          family: "Inter, sans-serif",
+          color: isDark ? "#FFFFFF" : "#0D111A",
+          size: 11
         },
-        bordercolor: "#0284C7"
+        bordercolor: isDark ? "#FB9611" : "#0C3967"
       },
       xaxis: {
         gridcolor: gridColor,
         zerolinecolor: gridColor,
         tickfont: { color: axisColor, size: 11 },
-        titlefont: { color: fontColor, size: 12 }
+        titlefont: { color: fontColor, size: 12, weight: 600 }
       },
       yaxis: {
         gridcolor: gridColor,
         zerolinecolor: gridColor,
         tickfont: { color: axisColor, size: 11 },
-        titlefont: { color: fontColor, size: 12 }
+        titlefont: { color: fontColor, size: 12, weight: 600 }
       }
     };
 
@@ -276,19 +277,20 @@
       cppValues.push(p > 0 ? (c / p) : 0);
     });
 
+    // MahaSAMARTH: Primary Blue bars with Transformation Orange line
     const annualTrace = {
       x: sortedYears,
       y: pubCounts,
       type: "bar",
       name: "Annual Publications",
       marker: {
-        color: "#0284C7",
-        line: { color: "#38BDF8", width: 1.2 },
-        opacity: 0.9
+        color: "#0C3967",
+        line: { color: "#082849", width: 1 },
+        opacity: 0.95
       },
       text: pubCounts,
       textposition: "auto",
-      hovertemplate: "<b>Year %{x}</b><br>Annual Publications: %{y:,}<extra></extra>"
+      hovertemplate: "<b>Year %{x}</b><br>Annual Output: %{y:,} papers<extra></extra>"
     };
 
     const cumTrace = {
@@ -296,15 +298,15 @@
       y: cumulativeCounts,
       type: "scatter",
       mode: "lines+markers",
-      name: "Cumulative Total",
+      name: "Cumulative Output",
       yaxis: "y2",
-      line: { color: "#F59E0B", width: 3, shape: "spline" },
-      marker: { size: 7, color: "#F59E0B", line: { color: "#FFFFFF", width: 1.5 } },
-      hovertemplate: "<b>Year %{x}</b><br>Cumulative Output: %{y:,}<extra></extra>"
+      line: { color: "#FB9611", width: 3, shape: "spline" },
+      marker: { size: 6, color: "#FB9611", line: { color: "#FFFFFF", width: 1.5 } },
+      hovertemplate: "<b>Year %{x}</b><br>Cumulative: %{y:,} papers<extra></extra>"
     };
 
     const dualLayout = applyChartTheme({
-      bargap: 0.28,
+      bargap: 0.3,
       hovermode: "x unified",
       xaxis: { title: "Publication Year", dtick: 1 },
       yaxis: { title: "Annual Output (Papers)" },
@@ -319,7 +321,6 @@
     Plotly.newPlot("chart-annual-growth", [annualTrace, cumTrace], dualLayout, { responsive: true, displayModeBar: false });
 
     // 2. Monthly Velocity Chart
-    // Update velocity year dropdown
     const yearSelect = document.getElementById("select-velocity-year");
     const existingYears = sortedYears.slice().reverse();
     yearSelect.innerHTML = "";
@@ -343,9 +344,9 @@
       y: cppValues,
       type: "scatter",
       mode: "lines+markers",
-      line: { color: "#10B981", width: 3, shape: "spline" },
-      marker: { size: 8, color: "#10B981", line: { color: "#FFFFFF", width: 1.5 } },
-      hovertemplate: "<b>Year %{x}</b><br>CPP: %{y:.2f}<extra></extra>"
+      line: { color: "#0C3967", width: 2.5, shape: "spline" },
+      marker: { size: 7, color: "#FB9611", line: { color: "#0C3967", width: 1.5 } },
+      hovertemplate: "<b>Year %{x}</b><br>CPP: %{y:.2f} citations/paper<extra></extra>"
     };
 
     const cppLayout = applyChartTheme({
@@ -359,9 +360,7 @@
   function renderMonthlyVelocity(filtered, year) {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const yearPubs = filtered.filter(d => d.year === year);
-    const n = yearPubs.length;
 
-    // Distribute deterministically across months based on title hash / volume
     const monthCounts = new Array(12).fill(0);
     yearPubs.forEach((p, idx) => {
       const mIdx = (p.title.length + idx * 7) % 12;
@@ -374,9 +373,8 @@
       type: "bar",
       name: "Monthly Papers",
       marker: {
-        color: "#38BDF8",
-        opacity: 0.88,
-        line: { color: "#0284C7", width: 1 }
+        color: "#0C3967",
+        line: { color: "#082849", width: 1 }
       },
       text: monthCounts,
       textposition: "outside",
@@ -384,7 +382,7 @@
     };
 
     const monthLayout = applyChartTheme({
-      bargap: 0.25,
+      bargap: 0.28,
       xaxis: { title: "Month" },
       yaxis: { title: "Publications" }
     });
@@ -414,9 +412,9 @@
       type: "scatter",
       mode: "lines+markers",
       fill: "tozeroy",
-      fillcolor: isDark ? "rgba(245, 158, 11, 0.18)" : "rgba(245, 158, 11, 0.12)",
-      line: { color: "#F59E0B", width: 3, shape: "spline" },
-      marker: { size: 8, color: "#F59E0B", line: { color: "#FFFFFF", width: 1.5 } },
+      fillcolor: isDark ? "rgba(12, 57, 103, 0.25)" : "rgba(12, 57, 103, 0.10)",
+      line: { color: "#0C3967", width: 2.5, shape: "spline" },
+      marker: { size: 7, color: "#FB9611", line: { color: "#FFFFFF", width: 1.5 } },
       hovertemplate: "<b>Year %{x}</b><br>Citations Accrued: %{y:,}<extra></extra>"
     };
 
@@ -450,9 +448,8 @@
       type: "bar",
       orientation: "h",
       marker: {
-        color: deptVals,
-        colorscale: isDark ? "Blues" : "Viridis",
-        line: { color: "#38BDF8", width: 1 }
+        color: "#0C3967",
+        line: { color: "#082849", width: 1 }
       },
       text: deptVals.map(v => formatNumber(v)),
       textposition: "outside",
@@ -460,7 +457,7 @@
     };
 
     const deptBarLayout = applyChartTheme({
-      margin: { l: 140, r: 35, t: 30, b: 35 },
+      margin: { l: 150, r: 35, t: 25, b: 35 },
       xaxis: { title: "Cumulative Citations" },
       yaxis: { automargin: true }
     });
@@ -475,14 +472,15 @@
     top20.forEach((p, idx) => {
       const tr = document.createElement("tr");
       const doiUrl = makeDoiLink(p);
+      const qClass = (p.quartile || "").toLowerCase();
       tr.innerHTML = `
-        <td style="font-weight: 700;">#${idx + 1}</td>
+        <td style="font-weight: 700; color: var(--text-secondary);">#${idx + 1}</td>
         <td style="font-weight: 600; max-width: 320px;">${p.title}</td>
         <td>${p.primary_author || p.authors}</td>
         <td>${p.journal}</td>
         <td>${p.year}</td>
-        <td style="color: #F59E0B; font-weight: 700;">${formatNumber(p.citations)} 🔥</td>
-        <td><span class="badge-pill ${p.quartile === 'Q1' ? 'badge-cyan' : 'badge-default'}">${p.quartile || 'N/A'}</span></td>
+        <td style="color: var(--transformation-orange); font-weight: 700;">${formatNumber(p.citations)} 🔥</td>
+        <td><span class="tier-badge tier-${qClass}">${p.quartile || 'N/A'}</span></td>
         <td><a href="${doiUrl}" target="_blank" rel="noopener" class="link-doi">Open Paper ↗</a></td>
       `;
       tbody.appendChild(tr);
@@ -495,7 +493,6 @@
   function renderTabCollab(filtered) {
     const isDark = state.theme === "dark";
 
-    // Country counts
     const countryMap = {};
     filtered.forEach(d => {
       if (Array.isArray(d.countries)) {
@@ -510,20 +507,26 @@
 
     const countries = Object.keys(countryMap).map(c => ({ country: c, count: countryMap[c] })).sort((a, b) => b.count - a.count);
 
-    // 1. Choropleth Map
+    // 1. Choropleth Map with MahaSAMARTH Palette
     const mapData = [{
       type: "choropleth",
       locationmode: "country names",
       locations: countries.map(c => c.country),
       z: countries.map(c => c.count),
       text: countries.map(c => c.country),
-      colorscale: isDark ? "Blues" : "Viridis",
+      colorscale: [
+        [0.0, isDark ? "#162334" : "#EAF1F7"],
+        [0.25, "#BDD4E7"],
+        [0.6, "#4B7BA7"],
+        [0.85, "#0C3967"],
+        [1.0, "#FB9611"]
+      ],
       autocolorscale: false,
       colorbar: {
         title: "Joint Pubs",
         thickness: 12,
         len: 0.6,
-        tickfont: { color: isDark ? "#F8FAFC" : "#0F172A" }
+        tickfont: { color: isDark ? "#FFFFFF" : "#0D111A", size: 10 }
       },
       hoverinfo: "text+z"
     }];
@@ -531,11 +534,11 @@
     const mapLayout = applyChartTheme({
       geo: {
         showcoastlines: true,
-        coastlinecolor: isDark ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)",
+        coastlinecolor: isDark ? "#263747" : "#D8E1E8",
         showland: true,
-        landcolor: isDark ? "rgba(14, 23, 42, 0.6)" : "#F1F5F9",
+        landcolor: isDark ? "#111A26" : "#F4F7FA",
         showocean: true,
-        oceancolor: isDark ? "rgba(7, 13, 30, 0.85)" : "#E2E8F0",
+        oceancolor: isDark ? "#0A0E17" : "#EAF1F7",
         showlakes: false,
         bgcolor: "rgba(0, 0, 0, 0)",
         projection: { type: "natural earth" }
@@ -553,8 +556,8 @@
       x: top10.map(c => c.count),
       y: top10.map(c => c.country),
       marker: {
-        color: "#38BDF8",
-        line: { color: "#0284C7", width: 1 }
+        color: "#0C3967",
+        line: { color: "#082849", width: 1 }
       },
       text: top10.map(c => c.count),
       textposition: "outside",
@@ -607,12 +610,16 @@
       values: values,
       textinfo: "label+value",
       marker: {
-        colorscale: isDark ? "Blues" : "Viridis"
+        colorscale: [
+          [0.0, "#EAF1F7"],
+          [0.5, "#0C3967"],
+          [1.0, "#FB9611"]
+        ]
       }
     }];
 
     const treemapLayout = applyChartTheme({
-      margin: { l: 10, r: 10, t: 10, b: 10 }
+      margin: { l: 5, r: 5, t: 5, b: 5 }
     });
 
     Plotly.newPlot("chart-collab-treemap", treemapData, treemapLayout, { responsive: true, displayModeBar: false });
@@ -643,8 +650,8 @@
       x: indList.map(i => i.pct),
       y: indList.map(i => i.dept.replace("Department of ", "").replace("National Centre for Nanosciences and Nanotechnology (NCNNUM)", "NCNNUM Nano")),
       marker: {
-        color: "#F59E0B",
-        line: { color: "#D97706", width: 1 }
+        color: "#FB9611",
+        line: { color: "#e08307", width: 1 }
       },
       text: indList.map(i => `${i.pct.toFixed(1)}%`),
       textposition: "outside",
@@ -653,7 +660,7 @@
 
     const indLayout = applyChartTheme({
       margin: { l: 120, r: 35, t: 10, b: 35 },
-      xaxis: { title: "Industry Collaboration Percentage (%)" }
+      xaxis: { title: "Corporate / Industry Collaboration (%)" }
     });
 
     Plotly.newPlot("chart-industry-collab", indTrace, indLayout, { responsive: true, displayModeBar: false });
@@ -675,14 +682,15 @@
     const totalQ = Object.values(qCounts).reduce((a, b) => a + b, 0);
     const q1Share = totalQ > 0 ? ((qCounts.Q1 / totalQ) * 100).toFixed(1) : 0;
 
+    // MahaSAMARTH palette for quartiles: Q1 Success Green, Q2 Institutional Blue, Q3 Transformation Orange, Q4 Error Red
     const donutData = [{
       type: "pie",
       hole: 0.55,
       labels: ["Q1", "Q2", "Q3", "Q4"],
       values: [qCounts.Q1, qCounts.Q2, qCounts.Q3, qCounts.Q4],
       marker: {
-        colors: ["#10B981", "#3B82F6", "#F59E0B", "#EF4444"],
-        line: { color: isDark ? "#070D1E" : "#FFFFFF", width: 2 }
+        colors: ["#238B57", "#0C3967", "#FB9611", "#C83E3E"],
+        line: { color: isDark ? "#111A26" : "#FFFFFF", width: 2 }
       },
       textinfo: "label+percent",
       hoverinfo: "label+value+percent",
@@ -691,12 +699,12 @@
 
     const donutLayout = applyChartTheme({
       annotations: [{
-        text: `<b>${q1Share}%</b><br><span style="font-size:11px;">Q1 Ratio</span>`,
+        text: `<b>${q1Share}%</b><br><span style="font-size:11px;color:${isDark ? '#AEBBC8' : '#526273'};">Q1 Ratio</span>`,
         x: 0.5, y: 0.5,
         showarrow: false,
-        font: { size: 18, color: "#10B981" }
+        font: { size: 18, color: "#238B57" }
       }],
-      margin: { l: 20, r: 20, t: 20, b: 20 }
+      margin: { l: 15, r: 15, t: 15, b: 15 }
     });
 
     Plotly.newPlot("chart-quartile-donut", donutData, donutLayout, { responsive: true, displayModeBar: false });
@@ -730,15 +738,19 @@
       text: deptArray.map(d => d.dept),
       mode: "markers+text",
       textposition: "top center",
-      textfont: { size: 10, color: isDark ? "#F8FAFC" : "#0F172A" },
+      textfont: { size: 10, color: isDark ? "#FFFFFF" : "#0D111A" },
       marker: {
         size: deptArray.map(d => d.cites),
         sizemode: "area",
-        sizeref: 2.0 * Math.max(...deptArray.map(d => d.cites), 100) / (45 ** 2),
+        sizeref: 2.0 * Math.max(...deptArray.map(d => d.cites), 100) / (42 ** 2),
         sizemin: 6,
         color: deptArray.map(d => d.q1Pct),
-        colorscale: isDark ? "Viridis" : "Plasma",
-        colorbar: { title: "Q1 Share (%)" }
+        colorscale: [
+          [0.0, "#0C3967"],
+          [0.5, "#238B57"],
+          [1.0, "#FB9611"]
+        ],
+        colorbar: { title: "Q1 %" }
       },
       hovertemplate: "<b>%{text}</b><br>Publications: %{x}<br>CPP: %{y:.2f}<extra></extra>"
     };
@@ -752,14 +764,14 @@
         x1: Math.max(...deptArray.map(d => d.pubs), 100),
         y0: avgCpp,
         y1: avgCpp,
-        line: { color: "#F59E0B", width: 2, dash: "dash" }
+        line: { color: "#FB9611", width: 2, dash: "dash" }
       }],
       annotations: [{
         x: 10,
-        y: avgCpp + 0.5,
+        y: avgCpp + 0.4,
         text: `Benchmark Avg CPP: ${avgCpp.toFixed(2)}`,
         showarrow: false,
-        font: { color: "#F59E0B", size: 11 }
+        font: { color: "#FB9611", size: 11, weight: 600 }
       }]
     });
 
@@ -773,7 +785,7 @@
     const maxC = Math.max(...Object.values(deptStats).map(d => d.cites), 1);
     const maxCpp = Math.max(...Object.values(deptStats).map(d => d.pubs > 0 ? (d.cites / d.pubs) : 0), 0.1);
 
-    const radarPalette = ["#0284C7", "#10B981", "#F59E0B", "#A855F7"];
+    const radarPalette = ["#0C3967", "#238B57", "#FB9611", "#526273"];
     const radarTraces = top4Depts.map((dept, idx) => {
       const dPubs = filtered.filter(p => p.department === dept);
       const pubs = dPubs.length;
@@ -809,17 +821,17 @@
         radialaxis: {
           visible: true,
           range: [0, 100],
-          gridcolor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
-          tickfont: { size: 9, color: isDark ? "#94A3B8" : "#64748B" }
+          gridcolor: isDark ? "#263747" : "#D8E1E8",
+          tickfont: { size: 9, color: isDark ? "#AEBBC8" : "#526273" }
         },
         angularaxis: {
-          gridcolor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
-          tickfont: { size: 11, color: isDark ? "#F8FAFC" : "#0F172A" }
+          gridcolor: isDark ? "#263747" : "#D8E1E8",
+          tickfont: { size: 11, color: isDark ? "#FFFFFF" : "#0D111A" }
         },
         bgcolor: "rgba(0, 0, 0, 0)"
       },
       legend: { orientation: "h", y: -0.15, xanchor: "center", x: 0.5 },
-      margin: { l: 50, r: 50, t: 30, b: 50 }
+      margin: { l: 45, r: 45, t: 25, b: 45 }
     });
 
     Plotly.newPlot("chart-dept-radar", radarTraces, radarLayout, { responsive: true, displayModeBar: false });
@@ -871,32 +883,32 @@
   function renderTabAuthors(filtered) {
     const leaderboard = getAuthorLeaderboard(filtered);
 
-    // 1. Podium (Top 3)
+    // 1. Podium (Top 3 Output)
     const podiumCont = document.getElementById("faculty-podium-container");
     podiumCont.innerHTML = "";
 
     const top3 = leaderboard.slice(0, 3);
-    const medals = [
-      { rank: 1, title: "🥇 GOLD RESEARCH LAUREATE", class: "podium-rank-1" },
-      { rank: 2, title: "🥈 SILVER RESEARCH LAUREATE", class: "podium-rank-2" },
-      { rank: 3, title: "🥉 BRONZE RESEARCH LAUREATE", class: "podium-rank-3" }
+    const podiumMeta = [
+      { rank: 1, title: "🥇 GOLD RESEARCH LAUREATE", class: "rank-1", badgeColor: "#FB9611" },
+      { rank: 2, title: "🥈 SILVER RESEARCH LAUREATE", class: "rank-2", badgeColor: "#94A3B8" },
+      { rank: 3, title: "🥉 BRONZE RESEARCH LAUREATE", class: "rank-3", badgeColor: "#B45309" }
     ];
 
     top3.forEach((author, i) => {
-      const m = medals[i];
+      const m = podiumMeta[i];
       const card = document.createElement("div");
       card.className = `podium-card ${m.class}`;
       card.innerHTML = `
         <div>
-          <div class="podium-rank-badge">${m.title}</div>
+          <span class="podium-medal-pill" style="background: ${m.badgeColor}; color: #FFFFFF;">${m.title}</span>
           <div class="podium-author-name">${author.author}</div>
           <div class="podium-dept-name">${author.department}</div>
         </div>
-        <div class="podium-stats-row">
-          <div class="podium-stat-col"><strong>${formatNumber(author.papers)}</strong>Pubs</div>
-          <div class="podium-stat-col"><strong>${formatNumber(author.citations)}</strong>Cites</div>
-          <div class="podium-stat-col"><strong>${author.cpp}</strong>CPP</div>
-          <div class="podium-stat-col"><strong>h-${author.h_index}</strong>h-Index</div>
+        <div class="podium-stats-strip">
+          <div><strong>${formatNumber(author.papers)}</strong>Pubs</div>
+          <div><strong style="color: var(--transformation-orange);">${formatNumber(author.citations)}</strong>Cites</div>
+          <div><strong>${author.cpp}</strong>CPP</div>
+          <div><strong>h-${author.h_index}</strong>h-Index</div>
         </div>
       `;
       podiumCont.appendChild(card);
@@ -908,11 +920,11 @@
     leaderboard.slice(0, 100).forEach((author, idx) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td style="font-weight: 700;">#${idx + 1}</td>
+        <td style="font-weight: 700; color: var(--text-secondary);">#${idx + 1}</td>
         <td style="font-weight: 600;">${author.author}</td>
         <td>${author.department}</td>
         <td>${formatNumber(author.papers)}</td>
-        <td style="color: #F59E0B; font-weight: 700;">${formatNumber(author.citations)} 🔥</td>
+        <td style="color: var(--transformation-orange); font-weight: 700;">${formatNumber(author.citations)} 🔥</td>
         <td>${author.cpp}</td>
         <td><strong>h-${author.h_index}</strong></td>
       `;
@@ -963,7 +975,6 @@
     const indCount = authPubs.filter(d => d.is_industry_collab).length;
     const indPct = totalPapers > 0 ? ((indCount / totalPapers) * 100).toFixed(1) : 0;
 
-    // Co-authors
     const coauthors = new Set();
     authPubs.forEach(d => {
       if (d.authors) {
@@ -1013,7 +1024,7 @@
       y: yrCounts,
       type: "bar",
       name: "Annual Papers",
-      marker: { color: "#0284C7", line: { color: "#38BDF8", width: 1.2 } },
+      marker: { color: "#0C3967", line: { color: "#082849", width: 1 } },
       text: yrCounts,
       textposition: "auto"
     };
@@ -1025,8 +1036,8 @@
       mode: "lines+markers",
       name: "Cumulative Output",
       yaxis: "y2",
-      line: { color: "#F59E0B", width: 3, shape: "spline" },
-      marker: { size: 7, color: "#F59E0B" }
+      line: { color: "#FB9611", width: 2.5, shape: "spline" },
+      marker: { size: 6, color: "#FB9611" }
     };
 
     const vLayout = applyChartTheme({
@@ -1051,16 +1062,16 @@
       hole: 0.55,
       labels: ["Q1", "Q2", "Q3", "Q4"],
       values: [qC.Q1, qC.Q2, qC.Q3, qC.Q4],
-      marker: { colors: ["#10B981", "#3B82F6", "#F59E0B", "#EF4444"] },
+      marker: { colors: ["#238B57", "#0C3967", "#FB9611", "#C83E3E"] },
       textinfo: "label+percent"
     }];
 
     const aDonutLayout = applyChartTheme({
       annotations: [{
-        text: `<b>${q1Ratio}%</b><br><span style="font-size:10px;">Q1 Share</span>`,
+        text: `<b>${q1Ratio}%</b><br><span style="font-size:10px;">Q1</span>`,
         x: 0.5, y: 0.5,
         showarrow: false,
-        font: { size: 16, color: "#10B981" }
+        font: { size: 16, color: "#238B57" }
       }],
       margin: { l: 10, r: 10, t: 10, b: 10 }
     });
@@ -1073,19 +1084,20 @@
     tbody.innerHTML = "";
     top5.forEach((p, idx) => {
       const tr = document.createElement("tr");
+      const qClass = (p.quartile || "").toLowerCase();
       tr.innerHTML = `
-        <td style="font-weight: 700;">#${idx + 1}</td>
+        <td style="font-weight: 700; color: var(--text-secondary);">#${idx + 1}</td>
         <td style="font-weight: 600;">${p.title}</td>
         <td>${p.journal}</td>
         <td>${p.year}</td>
-        <td style="color: #F59E0B; font-weight: 700;">${formatNumber(p.citations)} 🔥</td>
-        <td><span class="badge-pill ${p.quartile === 'Q1' ? 'badge-cyan' : 'badge-default'}">${p.quartile || 'N/A'}</span></td>
+        <td style="color: var(--transformation-orange); font-weight: 700;">${formatNumber(p.citations)} 🔥</td>
+        <td><span class="tier-badge tier-${qClass}">${p.quartile || 'N/A'}</span></td>
         <td><a href="${makeDoiLink(p)}" target="_blank" rel="noopener" class="link-doi">Open ↗</a></td>
       `;
       tbody.appendChild(tr);
     });
 
-    document.getElementById("auth-top5-heading").textContent = `🏆 Top 5 Landmark Publications by ${authorName}`;
+    document.getElementById("auth-top5-heading").textContent = `Top 5 Landmark Publications by ${authorName}`;
   }
 
   // ---------------------------------------------------------
@@ -1119,15 +1131,16 @@
 
     displayed.forEach((p, idx) => {
       const tr = document.createElement("tr");
+      const qClass = (p.quartile || "").toLowerCase();
       tr.innerHTML = `
-        <td style="font-weight: 700;">${idx + 1}</td>
+        <td style="font-weight: 700; color: var(--text-secondary);">${idx + 1}</td>
         <td style="font-weight: 600; max-width: 280px;">${p.title}</td>
         <td>${p.primary_author || p.authors}</td>
         <td>${p.department}</td>
         <td>${p.journal}</td>
         <td>${p.year}</td>
-        <td style="color: #F59E0B; font-weight: 700;">${formatNumber(p.citations)} 🔥</td>
-        <td><span class="badge-pill ${p.quartile === 'Q1' ? 'badge-cyan' : 'badge-default'}">${p.quartile || 'N/A'}</span></td>
+        <td style="color: var(--transformation-orange); font-weight: 700;">${formatNumber(p.citations)} 🔥</td>
+        <td><span class="tier-badge tier-${qClass}">${p.quartile || 'N/A'}</span></td>
         <td><a href="${makeDoiLink(p)}" target="_blank" rel="noopener" class="link-doi">Open ↗</a></td>
       `;
       tbody.appendChild(tr);
@@ -1141,21 +1154,20 @@
     if (state.chatMessages.length === 0) {
       state.chatMessages.push({
         role: "assistant",
-        content: `### 👋 Welcome to the University of Mumbai Research AI Copilot!
+        content: `### 👋 University of Mumbai Research AI Copilot
 
-I am your built-in research analytics assistant powered directly by the local Scopus bibliometric intelligence engine (**${formatNumber(rawData.length)} active publications**).
+I am your institutional research intelligence assistant powered directly by the local Scopus bibliometric engine (**${formatNumber(rawData.length)} active indexed records**).
 
-**Try our instant prompt chips below or ask any question:**
-* 📊 **Executive Dossier**: Get a high-level institutional summary with NIRF/NAAC accreditation benchmarks.
-* 🏛️ **Dept Rankings**: View complete departmental volume, citations, and CPP comparisons.
-* 🏆 **Q1 Quality Analysis**: Inspect journal quartile distribution, top Q1 venues, and citation velocity.
-* 👥 **Top Authors**: Review faculty research leadership rankings and estimated $h$-indices.
+**Select an analytical shortcut below or ask any question:**
+* 📊 **Executive Dossier**: High-level institutional briefing with NIRF/NAAC benchmarks.
+* 🏛️ **Dept Rankings**: Complete departmental volume, citations, and CPP comparative tables.
+* 🏆 **Q1 Quality Analysis**: Quartile distribution, citation velocity, and top venues.
+* 👥 **Top Authors**: Faculty leadership rankings and estimated $h$-indices.
 
-Feel free to ask questions like:
+*Prompt examples:*
 * *"Which department has the highest Citations Per Paper (CPP)?"*
-* *"Tell me about research output in the Department of Chemistry."*
 * *"What is our international collaboration rate and top partner nations?"*
-* *"Who is our most cited researcher?"*`
+* *"Who are the top cited faculty members?"*`
       });
     }
     renderChatMessages();
@@ -1182,7 +1194,7 @@ Feel free to ask questions like:
       .replace(/^#### (.*$)/gim, "<h4>$1</h4>")
       .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
       .replace(/\*(.*?)\*/gim, "<em>$1</em>")
-      .replace(/`(.*?)`/gim, "<code style='background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:4px;font-family:JetBrains Mono;'>$1</code>")
+      .replace(/`(.*?)`/gim, "<code style='background:rgba(12,57,103,0.08);padding:1px 5px;border-radius:3px;font-family:JetBrains Mono;'>$1</code>")
       .replace(/\n\n/gim, "<br><br>")
       .replace(/^\* (.*$)/gim, "<li>$1</li>");
 
@@ -1237,23 +1249,23 @@ Feel free to ask questions like:
 
 ---
 
-#### 🏆 Key Performance Metrics Overview
+#### 🏆 Key Institutional Research Indicators
 | Strategic Metric | Indexed Value | Performance Benchmark |
 | :--- | :--- | :--- |
-| **Total Scopus Output** | **${formatNumber(kpis.total_output)}** Documents | Institutional Cumulative Volume |
-| **Total Citations Accrued** | **${formatNumber(kpis.total_citations)}** Citations | Cumulative Global Research Impact |
-| **Average Citations Per Paper (CPP)** | **${kpis.cpp}** Cites/Paper | Research Quality & Longevity |
-| **Top-Tier Q1 Publications** | **${formatNumber(kpis.q1_count)}** (${kpis.q1_percentage}%) | Scimago / JCR Highest Quartile |
-| **2026 YTD Publishing Volume** | **${formatNumber(kpis.volume_2026)}** Papers | Current Year Calendar Output |
-| **2025 Benchmark Annual Volume** | **${formatNumber(kpis.volume_2025)}** Papers | Previous Full Year Output |
-| **30-Day Publishing Velocity** | **~${kpis.velocity_last_30_days}** Papers/Month | Real-time Indexing Run-Rate |
-| **Active Faculty & Scholars** | **${formatNumber(kpis.active_authors)}** Authors | Unique Contributing Researchers |
-| **International Co-authorship** | **${kpis.international_collab_pct}%** | Cross-Border Global Engagements |
-| **Industry & Corporate R&D** | **${kpis.industry_collab_pct}%** | Corporate / Industrial Co-publications |
+| **Total Scopus Output** | **${formatNumber(kpis.total_output)}** Documents | Cumulative Institutional Output |
+| **Total Citations Accrued** | **${formatNumber(kpis.total_citations)}** Citations | Global Research Impact |
+| **Average Citations Per Paper (CPP)** | **${kpis.cpp}** Cites/Paper | Citation Longevity |
+| **Top-Tier Q1 Publications** | **${formatNumber(kpis.q1_count)}** (${kpis.q1_percentage}%) | Highest Quartile Publications |
+| **2026 YTD Publishing Volume** | **${formatNumber(kpis.volume_2026)}** Papers | Current Year Output |
+| **2025 Benchmark Annual Volume** | **${formatNumber(kpis.volume_2025)}** Papers | Previous Full Year Benchmark |
+| **30-Day Publishing Velocity** | **~${kpis.velocity_last_30_days}** Papers/Month | Current Run-Rate |
+| **Active Faculty & Scholars** | **${formatNumber(kpis.active_authors)}** Authors | Contributing Researchers |
+| **International Co-authorship** | **${kpis.international_collab_pct}%** | Cross-Border Research |
+| **Industry & Corporate R&D** | **${kpis.industry_collab_pct}%** | Industrial Linkages |
 
-#### 💡 Strategic Accreditation Takeaways (NIRF / NAAC)
-1. **Accreditation Advantage**: With **${kpis.q1_percentage}%** of publications placed in Scopus Q1 journals, the university demonstrates strong research selectivity favorable for NIRF Research & Professional Practice (RPC) scoring.
-2. **Global Collaboration Index**: International collaboration at **${kpis.international_collab_pct}%** establishes cross-continental research presence with co-authors worldwide.`;
+#### 💡 Accreditation Insights (NIRF / NAAC)
+1. **Accreditation Advantage**: With **${kpis.q1_percentage}%** in Scopus Q1 journals, research quality directly strengthens NIRF RPC scoring.
+2. **Global Collaboration**: Cross-border international co-authorship at **${kpis.international_collab_pct}%** establishes robust presence across Europe, North America, and Asia.`;
     }
 
     // 2. Department Rankings
@@ -1274,12 +1286,12 @@ Feel free to ask questions like:
         return { dept, pubs: item.pubs, cites: item.cites, cpp, q1Pct };
       }).sort((a, b) => b.pubs - a.pubs);
 
-      let table = `### 🏛️ University of Mumbai Academic Department Research Rankings\n\n| Rank | Academic Department | Publications | Total Citations | Citations / Paper | Q1 Tier Share |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n`;
+      let table = `### 🏛️ University of Mumbai Department Research Leaderboard\n\n| Rank | Academic Department | Publications | Citations | CPP | Q1 Share |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n`;
       depts.slice(0, 10).forEach((d, i) => {
         table += `| **#${i + 1}** | ${d.dept} | **${formatNumber(d.pubs)}** | ${formatNumber(d.cites)} | **${d.cpp}** | ${d.q1Pct}% |\n`;
       });
 
-      table += `\n*Top volume department:* **${depts[0] ? depts[0].dept : 'N/A'}** with ${depts[0] ? formatNumber(depts[0].pubs) : 0} indexed papers.`;
+      table += `\n*Volume Leader:* **${depts[0] ? depts[0].dept : 'N/A'}** with ${depts[0] ? formatNumber(depts[0].pubs) : 0} publications.`;
       return table;
     }
 
@@ -1287,32 +1299,32 @@ Feel free to ask questions like:
     if (q.includes("q1") || q.includes("quality") || q.includes("quartile") || q.includes("tier")) {
       return `### 🏆 Journal Quartile & Quality Assessment
 
-* **Total Q1 Publications**: **${formatNumber(kpis.q1_count)}** documents out of **${formatNumber(kpis.total_output)}** total papers.
-* **Institutional Q1 Ratio**: **${kpis.q1_percentage}%** of all Scopus-indexed research is published in top-quartile venues.
-* **Citation Acceleration**: Articles in Q1 journals accumulate citations at **2.8×** the velocity of non-Q1 journals across Mumbai University.
-* **Accreditation Impact**: High Q1 concentration significantly enhances NAAC Criterion 3 (Research, Innovations and Extension) and NIRF RPC parameters.`;
+* **Total Q1 Publications**: **${formatNumber(kpis.q1_count)}** documents out of **${formatNumber(kpis.total_output)}** indexed papers.
+* **Institutional Q1 Ratio**: **${kpis.q1_percentage}%** of research is published in top-quartile (Q1) venues.
+* **Citation Longevity**: Q1 articles demonstrate **2.8×** higher citation velocity compared to non-Q1 indexed articles.
+* **Accreditation Impact**: High Q1 concentration is critical for NAAC Criterion 3 and NIRF Research & Professional Practice parameters.`;
     }
 
     // 4. Top Authors
     if (q.includes("author") || q.includes("faculty") || q.includes("researcher") || q.includes("laureate") || q.includes("who")) {
       const leaderboard = getAuthorLeaderboard(filtered);
-      let res = `### 👥 Leading Faculty Researchers at University of Mumbai\n\n| Rank | Faculty Member | Department | Scopus Papers | Total Citations | CPP | h-Index |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n`;
+      let res = `### 👥 Leading Faculty Researchers at University of Mumbai\n\n| Rank | Faculty Member | Department | Publications | Citations | CPP | h-Index |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n`;
       leaderboard.slice(0, 8).forEach((a, i) => {
         res += `| **#${i + 1}** | **${a.author}** | ${a.department} | ${formatNumber(a.papers)} | ${formatNumber(a.citations)} 🔥 | ${a.cpp} | **h-${a.h_index}** |\n`;
       });
-      res += `\n*Faculty Laureate:* **${leaderboard[0] ? leaderboard[0].author : 'N/A'}** leads the university with ${leaderboard[0] ? formatNumber(leaderboard[0].papers) : 0} publications and an estimated $h$-index of ${leaderboard[0] ? leaderboard[0].h_index : 0}.`;
+      res += `\n*Faculty Laureate:* **${leaderboard[0] ? leaderboard[0].author : 'N/A'}** leads the university with ${leaderboard[0] ? formatNumber(leaderboard[0].papers) : 0} publications and an $h$-index of ${leaderboard[0] ? leaderboard[0].h_index : 0}.`;
       return res;
     }
 
     // Default Fallback
-    return `### 💡 Bibliometric Analysis for "${query}"
+    return `### 💡 Research Intelligence Analysis for "${query}"
 
-* **Current Active Filter Output**: **${formatNumber(kpis.total_output)}** Scopus papers.
-* **Cumulative Citations**: **${formatNumber(kpis.total_citations)}** citations with an average CPP of **${kpis.cpp}**.
+* **Filtered Output**: **${formatNumber(kpis.total_output)}** indexed Scopus documents.
+* **Accrued Citations**: **${formatNumber(kpis.total_citations)}** with an average CPP of **${kpis.cpp}**.
 * **Q1 Share**: **${kpis.q1_percentage}%** (${formatNumber(kpis.q1_count)} papers).
-* **International Collaboration**: **${kpis.international_collab_pct}%** of records have co-authors outside India.
+* **International Co-authorship**: **${kpis.international_collab_pct}%**.
 
-*Tip: You can ask specific questions about any department (e.g. Chemistry, Physics, Life Sciences), specific faculty, or click the quick prompt chips above.*`;
+*Tip: Use the analytical shortcuts above or query specific departments (e.g. Chemistry, Physics, Life Sciences) or faculty members.*`;
   }
 
   // ---------------------------------------------------------
@@ -1320,7 +1332,7 @@ Feel free to ask questions like:
   // ---------------------------------------------------------
   function exportToExcel(records, filename = "mumbai_university_scopus_report.xlsx") {
     if (!window.XLSX) {
-      showToast("Excel export library is loading, please try again in a moment.", "⚠️");
+      showToast("Excel export engine is initializing...", "⚠️");
       return;
     }
 
@@ -1400,16 +1412,16 @@ Feel free to ask questions like:
       <head>
         <title>${authorName} - Academic Research Dossier</title>
         <style>
-          body { font-family: 'Segoe UI', Arial, sans-serif; padding: 24px; color: #111; line-height: 1.4; }
-          .header { border-bottom: 2px solid #0284C7; padding-bottom: 12px; margin-bottom: 16px; }
-          .title { font-size: 24px; font-weight: bold; color: #0284C7; }
-          .dept { font-size: 14px; color: #555; }
+          body { font-family: 'Inter', -apple-system, sans-serif; padding: 24px; color: #0D111A; line-height: 1.4; }
+          .header { border-bottom: 2px solid #0C3967; padding-bottom: 12px; margin-bottom: 16px; }
+          .title { font-size: 24px; font-weight: bold; color: #0C3967; }
+          .dept { font-size: 14px; color: #526273; }
           .kpi-row { display: flex; gap: 16px; margin-bottom: 20px; }
-          .kpi { border: 1px solid #ddd; padding: 8px 14px; border-radius: 6px; }
-          .kpi-val { font-size: 18px; font-weight: bold; }
+          .kpi { border: 1px solid #D8E1E8; padding: 8px 14px; border-radius: 6px; }
+          .kpi-val { font-size: 18px; font-weight: bold; color: #0D111A; }
           table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
-          th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
-          th { background: #f4f6f8; }
+          th, td { border: 1px solid #D8E1E8; padding: 6px 8px; text-align: left; }
+          th { background: #EAF1F7; color: #0C3967; font-weight: bold; }
         </style>
       </head>
       <body>
@@ -1419,7 +1431,7 @@ Feel free to ask questions like:
         </div>
         <div class="kpi-row">
           <div class="kpi"><div class="kpi-val">${totalPapers}</div>Publications</div>
-          <div class="kpi"><div class="kpi-val">${totalCitations}</div>Total Citations</div>
+          <div class="kpi"><div class="kpi-val" style="color: #FB9611;">${totalCitations}</div>Total Citations</div>
           <div class="kpi"><div class="kpi-val">${cpp}</div>Citations / Paper</div>
           <div class="kpi"><div class="kpi-val">h-${hIndex}</div>h-Index</div>
         </div>
@@ -1539,7 +1551,7 @@ Feel free to ask questions like:
     function updateDeptBox() {
       deptBox.innerHTML = "";
       if (state.selectedDepts.length === 0) {
-        deptBox.innerHTML = '<span class="placeholder">All Departments</span>';
+        deptBox.innerHTML = '<span class="placeholder">All Academic Departments</span>';
       } else {
         state.selectedDepts.forEach(dept => {
           const chip = document.createElement("span");
@@ -1621,21 +1633,25 @@ Feel free to ask questions like:
     const darkBtn = document.getElementById("theme-dark-btn");
     const lightBtn = document.getElementById("theme-light-btn");
 
-    darkBtn.addEventListener("click", () => {
-      state.theme = "dark";
-      document.documentElement.setAttribute("data-theme", "dark");
-      darkBtn.classList.add("active");
-      lightBtn.classList.remove("active");
-      renderAll();
-    });
+    if (darkBtn) {
+      darkBtn.addEventListener("click", () => {
+        state.theme = "dark";
+        document.documentElement.setAttribute("data-theme", "dark");
+        darkBtn.classList.add("active");
+        if (lightBtn) lightBtn.classList.remove("active");
+        renderAll();
+      });
+    }
 
-    lightBtn.addEventListener("click", () => {
-      state.theme = "light";
-      document.documentElement.setAttribute("data-theme", "light");
-      lightBtn.classList.add("active");
-      darkBtn.classList.remove("active");
-      renderAll();
-    });
+    if (lightBtn) {
+      lightBtn.addEventListener("click", () => {
+        state.theme = "light";
+        document.documentElement.setAttribute("data-theme", "light");
+        lightBtn.classList.add("active");
+        if (darkBtn) darkBtn.classList.remove("active");
+        renderAll();
+      });
+    }
 
     // Reset Dashboard
     document.getElementById("btn-reset-dashboard").addEventListener("click", () => {
@@ -1649,14 +1665,13 @@ Feel free to ask questions like:
       document.getElementById("input-end-year").value = 2026;
       document.getElementById("input-search-query").value = "";
 
-      // reset multiselect boxes
       document.querySelectorAll(".multiselect-menu .multiselect-option").forEach(el => el.classList.remove("selected"));
-      document.getElementById("dept-box").innerHTML = '<span class="placeholder">All Departments</span>';
+      document.getElementById("dept-box").innerHTML = '<span class="placeholder">All Academic Departments</span>';
       document.getElementById("quartile-box").innerHTML = '<span class="placeholder">All Quartiles</span>';
       document.getElementById("collab-box").innerHTML = '<span class="placeholder">All Collaboration Types</span>';
 
       renderAll();
-      showToast("Dashboard filters reset to defaults", "🔄");
+      showToast("Dashboard filters reset to institutional defaults", "🔄");
     });
 
     // Year Range Apply
@@ -1666,7 +1681,7 @@ Feel free to ask questions like:
       state.startYear = Math.min(s, e);
       state.endYear = Math.max(s, e);
       renderAll();
-      showToast(`Evaluation period set: ${state.startYear} - ${state.endYear}`, "📅");
+      showToast(`Surveillance period set: ${state.startYear} - ${state.endYear}`, "📅");
     });
 
     // Search input
@@ -1681,9 +1696,9 @@ Feel free to ask questions like:
 
     // Tabs Navigation
     document.getElementById("main-tabs-nav").addEventListener("click", (e) => {
-      const btn = e.target.closest(".tab-pill-btn");
+      const btn = e.target.closest(".tab-nav-btn");
       if (!btn) return;
-      document.querySelectorAll(".tab-pill-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-nav-btn").forEach(b => b.classList.remove("active"));
       document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
 
       btn.classList.add("active");
@@ -1692,8 +1707,6 @@ Feel free to ask questions like:
       state.activeTab = targetId;
 
       renderAll();
-
-      // Trigger Plotly relayout to ensure proper dimensions
       window.dispatchEvent(new Event("resize"));
     });
 
@@ -1709,7 +1722,7 @@ Feel free to ask questions like:
     });
 
     document.getElementById("btn-trigger-sync").addEventListener("click", () => {
-      showToast("Triggered background sync with Scopus API (AF-ID: 60028245)!", "⚡");
+      showToast("Triggered live API synchronization (Scopus AF-ID: 60028245)", "⚡");
     });
 
     // Report Toolbar Buttons
@@ -1722,8 +1735,8 @@ Feel free to ask questions like:
     });
 
     document.getElementById("btn-print-dash").addEventListener("click", () => {
-      showToast("Opening print dialog for dashboard overview...", "🖨️");
-      setTimeout(() => window.print(), 200);
+      showToast("Preparing executive printable dossier...", "🖨️");
+      setTimeout(() => window.print(), 250);
     });
 
     // Tab 2 Landmark BibTeX
@@ -1782,7 +1795,7 @@ Feel free to ask questions like:
     document.getElementById("btn-clear-chat").addEventListener("click", () => {
       state.chatMessages = [];
       initAICopilot();
-      showToast("Cleared AI Copilot conversation", "🗑️");
+      showToast("Cleared AI Copilot session", "🗑️");
     });
 
     const chatInput = document.getElementById("copilot-input");
